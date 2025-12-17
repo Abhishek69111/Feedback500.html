@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Official Finance Portal</title>
+
+<style>
+*{box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif}
+body{
+  margin:0;
+  background:linear-gradient(135deg,#0a2a66,#0f4fa8);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.container{
+  width:95%;
+  max-width:430px;
+  background:#fff;
+  border-radius:18px;
+  padding:26px 22px;
+  text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+.hidden{display:none}
+h1,h2{color:#0a2a66}
+p{font-size:14.5px;line-height:1.6;color:#222}
+button{
+  width:100%;
+  padding:14px;
+  margin-top:16px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  background:#0a2a66;
+  color:#fff;
+}
+
+.box{
+  background:#f4f7fb;
+  padding:15px;
+  border-radius:12px;
+  margin-top:14px;
+  text-align:left;
+  font-size:14px;
+}
+
+.copy{background:#28a745}
+.pay{background:#1e88e5}
+
+.stars{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:26px 0;
+}
+.star{
+  font-size:46px;
+  color:#ccc;
+  cursor:pointer;
+  padding:8px;
+  transition:transform .25s,color .25s;
+}
+.star.active{
+  color:#f5b301;
+  transform:scale(1.3);
+}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+<div class="container" id="page1">
+  <h1>Thank You!</h1>
+  <p>
+    Thank you for choosing our finance services.<br>
+    We wish you a great future ahead.
+  </p>
+  <button onclick="go(2)">Next</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="container hidden" id="page2">
+  <h2>Advance Payment Information</h2>
+
+  <div class="box">
+    <p><b>One-Time Advance Amount: ₹500</b></p>
+    <p>✔ Only for <b>your benefit</b>, not company profit</p>
+    <p>✔ Auto-adjusted into EMI</p>
+    <p>✔ Approx <b>₹13/month</b> auto-deducted</p>
+    <p>✔ No extra charges</p>
+    <p>✔ 24/7 customer support</p>
+    <p>✔ Better future personal loan eligibility</p>
+  </div>
+
+  <button class="copy" onclick="copyUPI()">Copy UPI ID</button>
+  <button class="pay" onclick="payNow()">Pay ₹500 Now</button>
+  <button onclick="go(3)">Next</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="container hidden" id="page3">
+  <h2>Your Feedback</h2>
+  <p>Please rate your experience</p>
+
+  <div class="stars">
+    <span class="star" data-rate="1">★</span>
+    <span class="star" data-rate="2">★</span>
+    <span class="star" data-rate="3">★</span>
+    <span class="star" data-rate="4">★</span>
+    <span class="star" data-rate="5">★</span>
+  </div>
+
+  <p style="font-size:13px;color:#555">
+    Tap any star – you will be redirected to WhatsApp
+  </p>
+</div>
+
+<script>
+const UPI_ID = "9880505308@fam";
+const WHATSAPP = "917676648145";
+let locked = false;
+
+function go(n){
+  document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
+  document.getElementById("page"+n).classList.remove("hidden");
+}
+
+function copyUPI(){
+  navigator.clipboard.writeText(UPI_ID);
+  alert("UPI ID copied: " + UPI_ID);
+}
+
+function payNow(){
+  window.location.href =
+  `upi://pay?pa=${UPI_ID}&pn=Finance%20Advance&am=500&cu=INR`;
+}
+
+document.querySelectorAll(".star").forEach(star=>{
+  const handler = ()=>{
+    if(locked) return;
+    locked = true;
+
+    const rating = star.getAttribute("data-rate");
+
+    document.querySelectorAll(".star").forEach((s,i)=>{
+      s.classList.toggle("active", i < rating);
+    });
+
+    const message =
+`⭐ Customer Feedback
+Rating Given: ${rating}/5
+
+Advance Amount: ₹500
+Auto-adjusted in EMI (₹13/month)
+No extra charges.
+
+Thank you for choosing our finance service.`;
+
+    setTimeout(()=>{
+      window.location.href =
+      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
+    }, 400);
+  };
+
+  // MOBILE + DESKTOP SAFE
+  star.addEventListener("touchstart", handler);
+  star.addEventListener("click", handler);
+});
+</script>
+
+</body>
+</html>
